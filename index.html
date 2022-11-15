@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vanilla JS Carousel</title>
+  
+  <script src="/script.js" defer></script>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 95vh;
+    }
+    img {
+      width: 400px;
+      height: 300px;
+      object-fit: cover;
+      box-shadow: 0 0 3px rgba(0, 0, 0, 0.126);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="list-container">
+    <div class="list-item">
+      <img src="/images/fox-g553239d49_640.jpg" alt="">
+    </div>
+    <div class="list-item">
+      <img src="/images/dandelion-ga2040bd63_640.jpg" alt="">
+    </div>
+    <div class="list-item">
+      <img src="/images/flowers-g401d331c1_640.jpg" alt="">
+    </div>
+    <div class="list-item">
+      <img src="/images/frost-g1177b371a_640.jpg" alt="">
+    </div>
+    <div class="list-item">
+      <img src="/images/hd-wallpaper-g1f6e85245_640.jpg" alt="">
+    </div>
+    <div class="list-item">
+      <img src="/images/monkey-g8418f1e3c_640.jpg" alt="">
+    </div>
+    <div class="list-item">
+      <img src="/images/rose-gddcbce2ae_640.jpg" alt="">
+    </div>
+  </div>
+
+  <script>
+    window.onload = () => {
+      const carousel = new Carousel({
+        carouselContainerClass: 'list-container',
+        arrows: true,
+        responsive: {
+          breakpoint: 500,
+        },
+        css: {
+          maxWidth: 768,
+        }
+      });
+    }
+  </script>
+</body>
+</html>
