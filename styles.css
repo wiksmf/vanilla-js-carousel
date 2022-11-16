@@ -23,8 +23,9 @@
   width: 40px;
   border: none;
   border-radius: 100%;
-  background-image: linear-gradient(45deg, #1275d8, #15e489c7);
-  color: #FFFFFF;
+  background-color: #c7bebe24;
+  box-shadow: 0 0 2px #00000045;
+  color: #000000;
   opacity: .7;
   cursor: pointer;
   z-index: 9999999999;
