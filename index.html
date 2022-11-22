@@ -10,13 +10,12 @@
   <link rel="stylesheet" href="styles.css">
 
   <style>
-    body {
+    .list-container-1 {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 95vh;
     }
     img {
+      position: relative;
+      display: block;
       width: 400px;
       height: 300px;
       object-fit: cover;
@@ -25,38 +24,48 @@
   </style>
 </head>
 <body>
+    <h2>CAROUSEL 1</h2>
 
-  <div class="list-container">
-    <div class="list-item">
-      <img src="/images/fox-g553239d49_640.jpg" alt="">
+    <div class="list-container-1">
+      <div class="list-item">
+        <img src="/images/fox-g553239d49_640.jpg" alt="">
+      </div>
+
+      <div class="list-item">
+        <img src="/images/dandelion-ga2040bd63_640.jpg" alt="">
+      </div>
+
+      <div class="list-item">
+        <img src="/images/flowers-g401d331c1_640.jpg" alt="">
+      </div>
+  
+      <div class="list-item">
+        <img src="/images/frost-g1177b371a_640.jpg" alt="">
+      </div>
+      
+      <!--
+      <div class="list-item">
+        <img src="/images/hd-wallpaper-g1f6e85245_640.jpg" alt="">
+      </div>
+        
+      <div class="list-item">
+        <img src="/images/monkey-g8418f1e3c_640.jpg" alt="">
+      </div>
+
+      <div class="list-item">
+        <img src="/images/rose-gddcbce2ae_640.jpg" alt="">
+      </div>
+ -->
     </div>
-    <div class="list-item">
-      <img src="/images/dandelion-ga2040bd63_640.jpg" alt="">
-    </div>
-    <div class="list-item">
-      <img src="/images/flowers-g401d331c1_640.jpg" alt="">
-    </div>
-    <div class="list-item">
-      <img src="/images/frost-g1177b371a_640.jpg" alt="">
-    </div>
-    <div class="list-item">
-      <img src="/images/hd-wallpaper-g1f6e85245_640.jpg" alt="">
-    </div>
-    <div class="list-item">
-      <img src="/images/monkey-g8418f1e3c_640.jpg" alt="">
-    </div>
-    <div class="list-item">
-      <img src="/images/rose-gddcbce2ae_640.jpg" alt="">
-    </div>
-  </div>
+
 
   <script>
     window.onload = () => {
       const carousel = new Carousel({
-        carouselContainerClass: 'list-container',
+        carouselContainerClass: 'list-container-1',
         arrows: true,
         responsive: {
-          breakpoint: 500,
+          breakpoint: 650,
         },
         css: {
           maxWidth: 768,

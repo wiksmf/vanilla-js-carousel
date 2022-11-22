@@ -18,15 +18,20 @@ function Carousel(options) {
 
     function carouselInitialSetUp() {
       carouselContainer.classList.add('carousel-container');
-      carouselItems.forEach((item, index) => {
+      carouselItems.forEach((item) => {
         item.classList.add('carousel-item');
       });
 
       if (hasArrows) showArrows();
       if (cssMaxWidth) carouselContainer.style.maxWidth = `${cssMaxWidth}px`;
 
+
+
       carouselItems.forEach((item) => {
-        item.addEventListener('click', () => slideCarousel(item));
+        item.addEventListener('click', (e) => {
+          console.log(e.currentTarget);
+          slideCarousel(e, item)
+        });
         item.addEventListener('touchstart', (e) => swipeStart(e));
         item.addEventListener('touchmove', (e) => swipeMove(e));
         item.addEventListener('touchend', swipeEnd);
@@ -64,36 +69,44 @@ function Carousel(options) {
 
     function setCenterPosition(centralItem) {
       centralItem.classList.add('center');
-      centralItem.style.transform = 'translate3d(0, 0, 0)';
-      centralItem.style.zIndex = carouselItems.length - 1;
+      centralItem.style.transform = 'translateX(0) scale(1)';
+      centralItem.style.zIndex = carouselItems.length;
       centralItem.dataset.carouselItem = 0;
     }
 
     function setRightItemsPosition(rightItems) {
       rightItems.forEach((item, index) => {
         if (window.innerWidth <= responsiveBreakpoint) {
-          item.style.transform = 'translate3d(50px, 0, -80px)';
+          item.style.transform = 'translateX(${50}px) scale(${0.9})';
+          item.style.zIndex = carouselItems.length;
+
         } else {
           const translateValue = index + 1;
-          item.style.transform = `translate3d(${50 * translateValue}px, 0, -${50 * translateValue}px)`;
+          item.style.transform = `translateX(${50 * translateValue}px) scale(${1 - translateValue / 15})`;
+          item.style.zIndex = rightItems.length - index;
         }
 
-        item.style.zIndex = rightItems.length - index;
         item.dataset.carouselItem = index + 1;
+
       });
     }
 
     function setLeftItemsPosition(leftItems) {
       leftItems.forEach((item, index) => {
         if (carouselItemsLength === 2) {
-          item.style.transform = 'translate3d(50px, 0, -80px)';
-        } else if (window.innerWidth <= responsiveBreakpoint) item.style.transform = 'translate3d(-50px, 0, -80px)';
-        else {
           const translateValue = leftItems.length - index;
-          item.style.transform = `translate3d(-${50 * translateValue}px, 0, -${50 * translateValue}px)`;
+          item.style.transform = 'translateX(-${50}px) scale(${0.9})';
+          item.style.zIndex = carouselItems.length;
+
+        } else if (window.innerWidth <= responsiveBreakpoint) {
+          item.style.transform = 'translate3d(-50px, 0, -80px)';
+          // item.style.transform = 'translateX(-${50 * translateValue}px) translateZ(-80px)';
+        } else {
+          const translateValue = leftItems.length - index;
+          item.style.transform = `translateX(-${50 * translateValue}px) scale(${1 - translateValue / 15})`;
+          item.style.zIndex = index + 1;
         }
 
-        item.style.zIndex = index + 1;
         item.dataset.carouselItem = -(leftItems.length - index);
       });
     }
@@ -103,8 +116,9 @@ function Carousel(options) {
         centralItem = carouselItems[1];
         rightItem = carouselItems[0];
         setCenterPosition(centralItem);
-        rightItem.style.transform = 'translate3d(-50px, 0, -80px)';
+        rightItem.style.transform = 'translateX(-50px) scale(0.9)';
         rightItem.dataset.carouselItem = -1;
+        rightItem.style.zIndex = 1;
 
         return;
       }
@@ -117,9 +131,9 @@ function Carousel(options) {
       leftItems = updatedArray.slice(getRightMostMiddleIndex);
 
       updatedArray.forEach((item) => item.classList.remove('center'));
-      setCenterPosition(centralItem);
       setRightItemsPosition(rightItems);
       setLeftItemsPosition(leftItems);
+      setCenterPosition(centralItem);
     }
 
     function translateToLeft() {
@@ -127,13 +141,14 @@ function Carousel(options) {
         centralItem = carouselItems[0];
         leftItem = carouselItems[1];
         setCenterPosition(centralItem);
-        leftItem.style.transform = 'translate3d(50px, 0, -80px)';
+        leftItem.style.transform = 'translateX(50px) scale(0.9)';
         leftItem.dataset.carouselItem = 1;
+        leftItem.style.zIndex = 1;
 
         return;
       }
 
-      if (leftItems.length > 2) {
+      if (leftItems.length >= 2) {
         updatedArray = [
           leftItems[leftItems.length - 1],
           centralItem,
@@ -141,7 +156,8 @@ function Carousel(options) {
           ...leftItems.slice(0, leftItems.length - 1),
         ];
       } else {
-        updatedArray = [leftItems[leftItems.length - 1], centralItem, ...rightItems];
+        console.log(leftItems[leftItems.length - 1], centralItem, ...rightItems)
+        updatedArray = [leftItems[leftItems.length - 1], centralItem, ...rightItems,];
       }
       const getRightMostMiddleIndex = updatedArray.length / 2 + 1;
 
@@ -155,10 +171,11 @@ function Carousel(options) {
       setCenterPosition(centralItem);
     }
 
-    function slideCarousel(item) {
-      const currentClickedElementIndex = item.dataset.carouselItem;
+    function slideCarousel(e, item) {
+      const currentClickedElementIndex = +item.dataset.carouselItem;
 
-      if (Math.sign(currentClickedElementIndex) === 1)
+      if (currentClickedElementIndex === 0) return;
+      else if (Math.sign(currentClickedElementIndex) === 1)
         for (let i = 0; i < Math.abs(currentClickedElementIndex); i++) translateToRight();
       else if (Math.sign(currentClickedElementIndex) === -1)
         for (let i = 0; i < Math.abs(currentClickedElementIndex); i++) translateToLeft();
@@ -179,8 +196,8 @@ function Carousel(options) {
     function swipeEnd() {
       isSwiping = false;
 
-      if (currentTranslate < -10) translateToRight();
-      else if (currentTranslate > 10) translateToLeft();
+      if (currentTranslate < -1) translateToRight();
+      else if (currentTranslate > 1) translateToLeft();
     }
 
     window.addEventListener('resize', () => {
