@@ -14,7 +14,7 @@ function Carousel(options) {
     let updatedArray;
     let isSwiping = false;
     let startPos;
-    let currentTranslate;
+    let currentTranslate = 0;
 
     function carouselInitialSetUp() {
       carouselContainer.classList.add('carousel-container');
@@ -69,18 +69,16 @@ function Carousel(options) {
       centralItem.style.transform = 'translateX(0) scale(1)';
       centralItem.style.zIndex = carouselItems.length;
       centralItem.dataset.carouselItem = 0;
-
     }
 
     function setRightItemsPosition(rightItems) {
       rightItems.forEach((item, index) => {
         if (window.innerWidth <= responsiveBreakpoint) {
-          item.style.transform = 'translateX(${50}px) scale(${0.9})';
-          item.style.zIndex = carouselItems.length;
-
+          item.style.transform = `translateX(${50}px) scale(${0.9})`;
+          item.style.zIndex = rightItems.length - index;
         } else {
           const translateValue = index + 1;
-          item.style.transform = `translateX(${50 * translateValue}px) scale(${1 - translateValue / 15})`;
+          item.style.transform = `translateX(${70 * translateValue}px) scale(${1 - translateValue / 15})`;
           item.style.zIndex = rightItems.length - index;
         }
 
@@ -92,15 +90,15 @@ function Carousel(options) {
       leftItems.forEach((item, index) => {
         if (carouselItemsLength === 2) {
           const translateValue = leftItems.length - index;
-          item.style.transform = 'translateX(-${50}px) scale(${0.9})';
+          item.style.transform = `translateX(-${50}px) scale(${0.9})`;
           item.style.zIndex = carouselItems.length;
 
         } else if (window.innerWidth <= responsiveBreakpoint) {
-          item.style.transform = 'translate3d(-50px, 0, -80px)';
-          // item.style.transform = 'translateX(-${50 * translateValue}px) translateZ(-80px)';
+          item.style.transform = `translateX(-${50}px) scale(${0.9})`;
+          item.style.zIndex = index + 1;
         } else {
           const translateValue = leftItems.length - index;
-          item.style.transform = `translateX(-${50 * translateValue}px) scale(${1 - translateValue / 15})`;
+          item.style.transform = `translateX(-${70 * translateValue}px) scale(${1 - translateValue / 15})`;
           item.style.zIndex = index + 1;
         }
 
@@ -212,6 +210,8 @@ function Carousel(options) {
 
       if (currentTranslate < -1) translateToRight();
       else if (currentTranslate > 1) translateToLeft();
+
+      currentTranslate = 0;
     }
 
     window.addEventListener('resize', () => {
