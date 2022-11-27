@@ -6,9 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vanilla JS Carousel</title>
   
-  <script src="/script.js" defer></script>
-  <link rel="stylesheet" href="styles.css">
-
   <style>
     .list-container-1 {
       display: flex;
@@ -21,10 +18,13 @@
       object-fit: cover;
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.126);
     }
-  </style>
+  </style>  
+  
+  <link rel="stylesheet" href="styles.css">
+  <script src="/script.js" defer></script>
 </head>
 <body>
-    <h2>CAROUSEL 1</h2>
+    <h2>CAROUSEL - work in progress</h2>
 
     <div class="list-container-1">
       <div class="list-item">
@@ -42,26 +42,27 @@
       <div class="list-item">
         <img src="/images/frost-g1177b371a_640.jpg" alt="">
       </div>
-
+      
       <div class="list-item">
         <img src="/images/hd-wallpaper-g1f6e85245_640.jpg" alt="">
       </div>
-        
+
       <div class="list-item">
         <img src="/images/monkey-g8418f1e3c_640.jpg" alt="">
       </div>
 
       <div class="list-item">
         <img src="/images/rose-gddcbce2ae_640.jpg" alt="">
-      </div> 
+      </div>  
     </div>
+
   <script>
     window.onload = () => {
       const carousel = new Carousel({
         carouselContainerClass: 'list-container-1',
         arrows: true,
         responsive: {
-          breakpoint: 650,
+          breakpoint: 840,
         },
         css: {
           maxWidth: 900,

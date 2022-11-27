@@ -10,58 +10,69 @@ function Carousel(options) {
   if (carouselItemsLength > 1) {
     let centralItem;
     let rightItems;
+    let rightItem;
     let leftItems;
+    let leftItem;
     let updatedArray;
-    let isSwiping = false;
-    let startPos;
+    let touchInitialPosition;
     let currentTranslate = 0;
+    let isSwiping = false;
 
     function carouselInitialSetUp() {
       carouselContainer.classList.add('carousel-container');
       carouselItems.forEach((item) => {
-        item.classList.add('carousel-item');
-      });
-
-      if (hasArrows) showArrows();
-      if (cssMaxWidth) carouselContainer.style.maxWidth = `${cssMaxWidth}px`;
-
-      carouselItems.forEach((item) => {
-        item.addEventListener('click', () => {
-          slideCarousel(item)
-        });
+        item.classList.add('carousel-item')
+        item.addEventListener('click', () => slideCarousel(item));
         item.addEventListener('touchstart', (e) => swipeStart(e));
         item.addEventListener('touchmove', (e) => swipeMove(e));
         item.addEventListener('touchend', swipeEnd);
       });
 
       setInitialCarouselItemPosition();
+
+      if (hasArrows) addArrows();
+      if (cssMaxWidth) carouselContainer.style.maxWidth = `${cssMaxWidth}px`;
     }
 
-    function showArrows() {
-      const btnPrevious = document.createElement('button');
-      btnPrevious.textContent = '❰';
-      btnPrevious.classList.add('carousel-btn', 'carousel-btn-previous');
+    function addArrows() {
+      const leftArrow = {
+        'text': '❰',
+        'btnTypeClass': 'carousel-btn-previous',
+      };
+      const rightArrow = {
+        'text': '❱',
+        'btnTypeClass': 'carousel-btn-next',
+      };
 
-      const btnNext = document.createElement('button');
-      btnNext.textContent = '❱';
-      btnNext.classList.add('carousel-btn', 'carousel-btn-next');
+      createArrow(leftArrow, translateToLeft);
+      createArrow(rightArrow, translateToRight);
+    }
 
-      carouselContainer.appendChild(btnPrevious);
-      carouselContainer.appendChild(btnNext);
+    function createArrow(arrow, translateFunction) {
+      const carouselArrowButton = document.createElement('button');
 
-      btnPrevious.addEventListener('click', translateToLeft);
-      btnNext.addEventListener('click', translateToRight);
+      carouselArrowButton.textContent = arrow.text;
+      carouselArrowButton.classList.add('carousel-btn', arrow.btnTypeClass);
+      carouselContainer.appendChild(carouselArrowButton);
+
+      carouselArrowButton.addEventListener('click', translateFunction);
     }
 
     function setInitialCarouselItemPosition() {
-      const getRightMostMiddleIndex = carouselItems.length / 2 + 1;
-      centralItem = carouselItems[0];
-      rightItems = carouselItems.slice(1, getRightMostMiddleIndex);
-      leftItems = carouselItems.slice(getRightMostMiddleIndex);
-
+      sliceCarouselItems(carouselItems);
       setCenterPosition(centralItem);
       setRightItemsPosition(rightItems);
       setLeftItemsPosition(leftItems);
+    }
+
+    function sliceCarouselItems(carouselItemsArray) {
+      const getRightMostMiddleIndex = carouselItemsArray.length / 2 + 1;
+
+      centralItem = carouselItemsArray[0];
+      rightItems = carouselItemsArray.slice(1, getRightMostMiddleIndex);
+      leftItems = carouselItemsArray.slice(getRightMostMiddleIndex);
+
+      return centralItem, rightItems, leftItems;
     }
 
     function setCenterPosition(centralItem) {
@@ -72,60 +83,60 @@ function Carousel(options) {
     }
 
     function setRightItemsPosition(rightItems) {
-      rightItems.forEach((item, index) => {
-        if (window.innerWidth <= responsiveBreakpoint) {
-          item.style.transform = `translateX(${50}px) scale(${0.9})`;
-          item.style.zIndex = rightItems.length - index;
-        } else {
-          const translateValue = index + 1;
-          item.style.transform = `translateX(${70 * translateValue}px) scale(${1 - translateValue / 15})`;
-          item.style.zIndex = rightItems.length - index;
-        }
+      if (!Array.isArray(rightItems)) {
+        rightItems.style.transform = `translateX(-${50}px) scale(${0.9})`;
+        rightItems.dataset.carouselItem = -1;
+        rightItems.style.zIndex = 1;
+      } else {
+        rightItems.forEach((item, index) => {
+          if (window.innerWidth <= responsiveBreakpoint) {
+            item.style.transform = `translateX(${50}px) scale(${0.9})`;
+          } else {
+            const translateValue = index + 1;
+            item.style.transform = `translateX(${70 * translateValue}px) scale(${1 - translateValue / 15})`;
+          }
 
-        item.dataset.carouselItem = index + 1;
-      });
+          item.style.zIndex = rightItems.length - index;
+          item.dataset.carouselItem = index + 1;
+        });
+      }
     }
 
     function setLeftItemsPosition(leftItems) {
-      leftItems.forEach((item, index) => {
-        if (carouselItemsLength === 2) {
-          const translateValue = leftItems.length - index;
-          item.style.transform = `translateX(-${50}px) scale(${0.9})`;
-          item.style.zIndex = carouselItems.length;
+      if (!Array.isArray(leftItems)) {
+        leftItems.style.transform = `translateX(${50}px) scale(${0.9})`;
+        leftItems.dataset.carouselItem = 1;
+        leftItems.style.zIndex = 1;
+      } else {
+        leftItems.forEach((item, index) => {
+          if (window.innerWidth <= responsiveBreakpoint) {
+            item.style.transform = `translateX(-${50}px) scale(${0.9})`;
+          } else {
+            const translateValue = leftItems.length - index;
+            item.style.transform = `translateX(-${70 * translateValue}px) scale(${1 - translateValue / 15})`;
+          }
 
-        } else if (window.innerWidth <= responsiveBreakpoint) {
-          item.style.transform = `translateX(-${50}px) scale(${0.9})`;
           item.style.zIndex = index + 1;
-        } else {
-          const translateValue = leftItems.length - index;
-          item.style.transform = `translateX(-${70 * translateValue}px) scale(${1 - translateValue / 15})`;
-          item.style.zIndex = index + 1;
-        }
-
-        item.dataset.carouselItem = -(leftItems.length - index);
-      });
+          item.dataset.carouselItem = -(leftItems.length - index);
+        });
+      }
     }
 
     function translateToRight() {
       if (carouselItemsLength === 2) {
         centralItem = carouselItems[1];
         rightItem = carouselItems[0];
+
         setCenterPosition(centralItem);
-        rightItem.style.transform = 'translateX(-50px) scale(0.9)';
-        rightItem.dataset.carouselItem = -1;
-        rightItem.style.zIndex = 1;
+        setRightItemsPosition(rightItem);
 
         return;
       }
 
       updatedArray = [...rightItems, ...leftItems, centralItem];
-      const getRightMostMiddleIndex = updatedArray.length / 2 + 1;
-
-      centralItem = updatedArray[0];
-      rightItems = updatedArray.slice(1, getRightMostMiddleIndex);
-      leftItems = updatedArray.slice(getRightMostMiddleIndex);
 
       updatedArray.forEach((item) => item.classList.remove('center'));
+      sliceCarouselItems(updatedArray);
       setRightItemsPosition(rightItems);
       setLeftItemsPosition(leftItems);
       setCenterPosition(centralItem);
@@ -136,30 +147,22 @@ function Carousel(options) {
         centralItem = carouselItems[0];
         leftItem = carouselItems[1];
         setCenterPosition(centralItem);
-        leftItem.style.transform = 'translateX(50px) scale(0.9)';
-        leftItem.dataset.carouselItem = 1;
-        leftItem.style.zIndex = 1;
+        setLeftItemsPosition(leftItem);
 
         return;
       }
 
-      if (leftItems.length >= 2) {
-        updatedArray = [
-          leftItems[leftItems.length - 1],
-          centralItem,
-          ...rightItems,
-          ...leftItems.slice(0, leftItems.length - 1),
-        ];
-      } else {
-        updatedArray = [leftItems[leftItems.length - 1], centralItem, ...rightItems,];
-      }
-      const getRightMostMiddleIndex = updatedArray.length / 2 + 1;
+      updatedArray = [
+        leftItems[leftItems.length - 1],
+        centralItem,
+        ...rightItems
+      ];
 
-      centralItem = updatedArray[0];
-      rightItems = updatedArray.slice(1, getRightMostMiddleIndex);
-      leftItems = updatedArray.slice(getRightMostMiddleIndex);
+      if (leftItems.length >= 2)
+        updatedArray.push(...leftItems.slice(0, leftItems.length - 1));
 
       updatedArray.forEach((item) => item.classList.remove('center'));
+      sliceCarouselItems(updatedArray);
       setRightItemsPosition(rightItems);
       setLeftItemsPosition(leftItems);
       setCenterPosition(centralItem);
@@ -167,41 +170,42 @@ function Carousel(options) {
 
     function slideCarousel(item) {
       const currentClickedElementIndex = +item.dataset.carouselItem;
+      const clickedIndexSign = Math.sign(currentClickedElementIndex);
+      const absoluteClickedIndexValue = Math.abs(currentClickedElementIndex);
+      let index = 0;
 
-      if (currentClickedElementIndex === 0) return;
-      else if (Math.sign(currentClickedElementIndex) === 1) {
-        let index = 0;
-        translateToSelectedItem(index, Math.abs(currentClickedElementIndex), translateToRight)
-      } else if (Math.sign(currentClickedElementIndex) === -1) {
-        let index = 0;
-        translateToSelectedItem(index, Math.abs(currentClickedElementIndex), translateToLeft)
-      }
+      if (currentClickedElementIndex === 0)
+        return;
+      else if (clickedIndexSign === 1)
+        translateToSelectedItem(index, absoluteClickedIndexValue, translateToRight);
+      else if (clickedIndexSign === -1)
+        translateToSelectedItem(index, absoluteClickedIndexValue, translateToLeft);
     }
 
-    function translateToSelectedItem(index, maxCount, func) {
+    function translateToSelectedItem(index, clickedIndex, translateFunction) {
       if (index === 0) {
-        func()
+        translateFunction();
         index++;
       }
 
-      if (index < maxCount) {
-        setTimeout(function () {
-          func()
+      if (index < clickedIndex) {
+        setTimeout(() => {
+          translateFunction();
           index++;
-          translateToSelectedItem(index, maxCount, func);
-        }, 300)
+          translateToSelectedItem(index, clickedIndex, translateFunction);
+        }, 200)
       }
     }
 
     function swipeStart(e) {
       isSwiping = true;
-      startPos = e.touches[0].clientX;
+      touchInitialPosition = e.touches[0].clientX;
     }
 
     function swipeMove(e) {
       if (isSwiping) {
         const currentPosition = e.touches[0].clientX;
-        currentTranslate = currentPosition - startPos;
+        currentTranslate = currentPosition - touchInitialPosition;
       }
     }
 
