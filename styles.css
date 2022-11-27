@@ -15,7 +15,7 @@
   position: absolute;
   cursor: pointer;
   transform-style: preserve-3d;
-  transition: all .2s linear;
+  transition: all 0.15s ease-in;
 }
 .carousel-btn {
   position: absolute;

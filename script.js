@@ -25,12 +25,9 @@ function Carousel(options) {
       if (hasArrows) showArrows();
       if (cssMaxWidth) carouselContainer.style.maxWidth = `${cssMaxWidth}px`;
 
-
-
       carouselItems.forEach((item) => {
-        item.addEventListener('click', (e) => {
-          console.log(e.currentTarget);
-          slideCarousel(e, item)
+        item.addEventListener('click', () => {
+          slideCarousel(item)
         });
         item.addEventListener('touchstart', (e) => swipeStart(e));
         item.addEventListener('touchmove', (e) => swipeMove(e));
@@ -72,6 +69,7 @@ function Carousel(options) {
       centralItem.style.transform = 'translateX(0) scale(1)';
       centralItem.style.zIndex = carouselItems.length;
       centralItem.dataset.carouselItem = 0;
+
     }
 
     function setRightItemsPosition(rightItems) {
@@ -87,7 +85,6 @@ function Carousel(options) {
         }
 
         item.dataset.carouselItem = index + 1;
-
       });
     }
 
@@ -156,7 +153,6 @@ function Carousel(options) {
           ...leftItems.slice(0, leftItems.length - 1),
         ];
       } else {
-        console.log(leftItems[leftItems.length - 1], centralItem, ...rightItems)
         updatedArray = [leftItems[leftItems.length - 1], centralItem, ...rightItems,];
       }
       const getRightMostMiddleIndex = updatedArray.length / 2 + 1;
@@ -171,14 +167,32 @@ function Carousel(options) {
       setCenterPosition(centralItem);
     }
 
-    function slideCarousel(e, item) {
+    function slideCarousel(item) {
       const currentClickedElementIndex = +item.dataset.carouselItem;
 
       if (currentClickedElementIndex === 0) return;
-      else if (Math.sign(currentClickedElementIndex) === 1)
-        for (let i = 0; i < Math.abs(currentClickedElementIndex); i++) translateToRight();
-      else if (Math.sign(currentClickedElementIndex) === -1)
-        for (let i = 0; i < Math.abs(currentClickedElementIndex); i++) translateToLeft();
+      else if (Math.sign(currentClickedElementIndex) === 1) {
+        let index = 0;
+        translateToSelectedItem(index, Math.abs(currentClickedElementIndex), translateToRight)
+      } else if (Math.sign(currentClickedElementIndex) === -1) {
+        let index = 0;
+        translateToSelectedItem(index, Math.abs(currentClickedElementIndex), translateToLeft)
+      }
+    }
+
+    function translateToSelectedItem(index, maxCount, func) {
+      if (index === 0) {
+        func()
+        index++;
+      }
+
+      if (index < maxCount) {
+        setTimeout(function () {
+          func()
+          index++;
+          translateToSelectedItem(index, maxCount, func);
+        }, 300)
+      }
     }
 
     function swipeStart(e) {
