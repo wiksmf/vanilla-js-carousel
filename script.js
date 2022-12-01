@@ -1,6 +1,7 @@
 function Carousel(options) {
   const carouselContainer = document.querySelector(`.${options.carouselContainerClass}`);
   const hasArrows = options.arrows;
+  const hasDots = options.dots;
   const responsiveBreakpoint = options.responsive.breakpoint;
   const mobileTranslateValue = options.responsive.mobileTranslateValue || 60;
   const desktopTranslateValue = options.responsive.desktopTranslateValue || 70;
@@ -33,6 +34,7 @@ function Carousel(options) {
       setInitialCarouselItemPosition();
 
       if (hasArrows) addArrows();
+      if (hasDots) addDots();
       if (cssMaxWidth) carouselContainer.style.maxWidth = `${cssMaxWidth}px`;
     }
 
@@ -57,7 +59,45 @@ function Carousel(options) {
       carouselArrowButton.classList.add('carousel-btn', arrow.btnTypeClass);
       carouselContainer.appendChild(carouselArrowButton);
 
-      carouselArrowButton.addEventListener('click', translateFunction);
+      carouselArrowButton.addEventListener('click', translateFunction)
+    }
+
+    function addDots() {
+      const carouselDotsContainer = document.createElement('div');
+      carouselDotsContainer.classList.add('carousel-dot-container')
+
+      carouselItems.forEach((item, index) => {
+        const carouselDot = document.createElement('span');
+
+        carouselDot.classList.add('carousel-dot-item');
+        carouselDot.dataset.dot = index;
+        carouselDotsContainer.append(carouselDot)
+
+        carouselDot.addEventListener('click', () => slideCarousel(item));
+      });
+
+      carouselContainer.appendChild(carouselDotsContainer);
+      activateDot(0);
+    }
+
+    function activateDot(index) {
+      const dots = document.querySelectorAll('.carousel-dot-item');
+      const selectedDot = document.querySelector(`.carousel-dot-item[data-dot="${index}"]`);
+
+      dots.forEach(dot => dot.classList.remove('carousel-dot-item--active'));
+      selectedDot.classList.add('carousel-dot-item--active');
+    };
+
+    function updateActiveDot(direction) {
+      const getDots = document.querySelectorAll('.carousel-dot-item');
+      let activeDotIndex = [...getDots].findIndex(item => item.classList.contains('carousel-dot-item--active'));
+
+      if (direction === 'right')
+        activeDotIndex === getDots.length - 1 ? activeDotIndex = 0 : activeDotIndex++;
+      else
+        activeDotIndex === 0 ? activeDotIndex = getDots.length - 1 : activeDotIndex--;
+
+      activateDot(activeDotIndex);
     }
 
     function setInitialCarouselItemPosition() {
@@ -136,6 +176,8 @@ function Carousel(options) {
         setCenterPosition(centralItem);
         setRightItemsPosition(rightItem);
 
+        if (hasDots) activateDot(1);
+
         return;
       }
 
@@ -146,14 +188,19 @@ function Carousel(options) {
       setRightItemsPosition(rightItems);
       setLeftItemsPosition(leftItems);
       setCenterPosition(centralItem);
+
+      if (hasDots) updateActiveDot('right');
     }
 
     function translateToLeft() {
       if (carouselItemsLength === 2) {
         centralItem = carouselItems[0];
         leftItem = carouselItems[1];
+
         setCenterPosition(centralItem);
         setLeftItemsPosition(leftItem);
+
+        if (hasDots) activateDot(0);
 
         return;
       }
@@ -172,6 +219,8 @@ function Carousel(options) {
       setRightItemsPosition(rightItems);
       setLeftItemsPosition(leftItems);
       setCenterPosition(centralItem);
+
+      if (hasDots) updateActiveDot('left');
     }
 
     function slideCarousel(item) {
