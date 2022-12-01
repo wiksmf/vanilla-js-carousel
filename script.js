@@ -2,6 +2,8 @@ function Carousel(options) {
   const carouselContainer = document.querySelector(`.${options.carouselContainerClass}`);
   const hasArrows = options.arrows;
   const responsiveBreakpoint = options.responsive.breakpoint;
+  const mobileTranslateValue = options.responsive.mobileTranslateValue || 60;
+  const desktopTranslateValue = options.responsive.desktopTranslateValue || 70;
   const cssMaxWidth = options.css.maxWidth;
 
   const carouselItems = Array.from(carouselContainer.children);
@@ -66,7 +68,7 @@ function Carousel(options) {
     }
 
     function sliceCarouselItems(carouselItemsArray) {
-      const getRightMostMiddleIndex = carouselItemsArray.length / 2 + 1;
+      const getRightMostMiddleIndex = carouselItemsLength / 2 + 1;
 
       centralItem = carouselItemsArray[0];
       rightItems = carouselItemsArray.slice(1, getRightMostMiddleIndex);
@@ -84,16 +86,18 @@ function Carousel(options) {
 
     function setRightItemsPosition(rightItems) {
       if (!Array.isArray(rightItems)) {
-        rightItems.style.transform = `translateX(-${50}px) scale(${0.9})`;
+        const translateIndexValue =
+          window.innerWidth <= responsiveBreakpoint ? mobileTranslateValue : desktopTranslateValue;
+        rightItems.style.transform = `translateX(-${translateIndexValue}px) scale(${0.9})`;
         rightItems.dataset.carouselItem = -1;
         rightItems.style.zIndex = 1;
       } else {
         rightItems.forEach((item, index) => {
           if (window.innerWidth <= responsiveBreakpoint) {
-            item.style.transform = `translateX(${50}px) scale(${0.9})`;
+            item.style.transform = `translateX(${mobileTranslateValue}px) scale(${0.9})`;
           } else {
-            const translateValue = index + 1;
-            item.style.transform = `translateX(${70 * translateValue}px) scale(${1 - translateValue / 15})`;
+            const translateIndexValue = index + 1;
+            item.style.transform = `translateX(${desktopTranslateValue * translateIndexValue}px) scale(${1 - translateIndexValue / 15})`;
           }
 
           item.style.zIndex = rightItems.length - index;
@@ -104,16 +108,18 @@ function Carousel(options) {
 
     function setLeftItemsPosition(leftItems) {
       if (!Array.isArray(leftItems)) {
-        leftItems.style.transform = `translateX(${50}px) scale(${0.9})`;
+        const translateIndexValue =
+          window.innerWidth <= responsiveBreakpoint ? mobileTranslateValue : desktopTranslateValue;
+        leftItems.style.transform = `translateX(${translateIndexValue}px) scale(${0.9})`;
         leftItems.dataset.carouselItem = 1;
         leftItems.style.zIndex = 1;
       } else {
         leftItems.forEach((item, index) => {
           if (window.innerWidth <= responsiveBreakpoint) {
-            item.style.transform = `translateX(-${50}px) scale(${0.9})`;
+            item.style.transform = `translateX(-${mobileTranslateValue}px) scale(${0.9})`;
           } else {
-            const translateValue = leftItems.length - index;
-            item.style.transform = `translateX(-${70 * translateValue}px) scale(${1 - translateValue / 15})`;
+            const translateIndexValue = leftItems.length - index;
+            item.style.transform = `translateX(-${desktopTranslateValue * translateIndexValue}px) scale(${1 - translateIndexValue / 15})`;
           }
 
           item.style.zIndex = index + 1;

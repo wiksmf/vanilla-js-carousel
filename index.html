@@ -6,9 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vanilla JS Carousel</title>
   
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
   <style>
-    .list-container-1 {
-      display: flex;
+    body {
+      background-color: #a8d9f7;
+      background-image: url(/images/black-orchid.png);
+      font-family: 'Roboto', sans-serif;
+      height: 90vh;
+    }
+    h1 {
+      margin-bottom: 110px;
     }
     img {
       position: relative;
@@ -18,15 +28,18 @@
       object-fit: cover;
       box-shadow: 0 0 3px rgba(0, 0, 0, 0.126);
     }
+    .list-container {
+      display: flex;
+    }
   </style>  
-  
+
   <link rel="stylesheet" href="styles.css">
   <script src="/script.js" defer></script>
 </head>
 <body>
-    <h2>CAROUSEL - work in progress</h2>
+    <h1>VANILLA JS CAROUSEL</h1>
 
-    <div class="list-container-1">
+    <div class="list-container">
       <div class="list-item">
         <img src="/images/fox-g553239d49_640.jpg" alt="">
       </div>
@@ -38,7 +51,7 @@
       <div class="list-item">
         <img src="/images/flowers-g401d331c1_640.jpg" alt="">
       </div>
-
+      
       <div class="list-item">
         <img src="/images/frost-g1177b371a_640.jpg" alt="">
       </div>
@@ -53,16 +66,19 @@
 
       <div class="list-item">
         <img src="/images/rose-gddcbce2ae_640.jpg" alt="">
-      </div>  
+      </div>
     </div>
 
   <script>
     window.onload = () => {
       const carousel = new Carousel({
-        carouselContainerClass: 'list-container-1',
+        carouselContainerClass: 'list-container',
         arrows: true,
+        dots: true,
         responsive: {
           breakpoint: 840,
+          mobileTranslateValue: 50,
+          desktopTranslateValue: 70,
         },
         css: {
           maxWidth: 900,
